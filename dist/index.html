@@ -1,25 +1,136 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#103c32"><title>Harmony · Drive Thru Timer</title><meta name="description" content="Harmony single-lane drive thru timer. Manual car tracking with a one-minute Window target."><link rel="stylesheet" href="style.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Harmony Drive Thru Timer</title>
+  <link rel="stylesheet" href="styles.css?v=harmony-v2">
+</head>
 <body>
-<header><a class="brand" href="./"><span class="brand-icon">H<span>↗</span></span><span>HARMONY<small>DRIVE THRU TIMER</small></span></a><div class="header-right"><span class="manual"><i></i> Manual mode</span><time id="clock"></time><button id="fullscreen" class="icon-button" title="Toggle full screen">⛶ <span>Full screen</span></button></div></header>
-<main>
-<div class="page-heading"><div><p class="eyebrow">ONE LANE. EVERY SECOND COUNTS.</p><h1>A smoother drive thru.</h1></div><div class="target"><span>WINDOW TARGET</span><strong>1:00 <small>min</small></strong></div></div>
-<section class="board" aria-label="Live drive thru lane">
-<div class="board-top"><span class="live"><i></i> LIVE LANE</span><span id="active-count">0 cars in lane</span></div>
-<div class="window-label"><span class="station-number">02</span> Window <span class="target-tag">TARGET 1:00</span></div>
-<div class="order-label"><span class="station-number">01</span> Order</div>
-<div class="road road-top"></div><div class="road road-right"></div><div class="lane-mark top-mark">←</div><div class="lane-mark right-mark">↑</div>
-<div id="window-car" class="station window-station"></div><div id="queue-cars" class="queue-cars"></div><div id="order-car" class="station order-station"></div>
-<div class="exit-label">← EXIT</div><div class="entry-label">ENTRY ↑</div>
-<section class="scorecard" aria-label="Daypart performance"><div class="score-heading"><span>THE BIG PICTURE</span><span id="daypart" class="daypart"></span></div><div class="main-stat"><div><h2>Cars this daypart</h2><p>Completed at the Window</p></div><strong id="count">0</strong></div><div class="stat-divider"></div><div class="secondary-stats"><div><span>Average Window</span><strong id="average">—</strong><small id="average-status">Waiting for the first car</small></div><div><span>On target</span><strong id="on-target">—</strong><small>Window time ≤ 1:00</small></div></div><div class="performance-track"><span id="performance-fill"></span></div><div class="score-foot"><span><i></i> Within target</span><span>≤ 1 minute</span></div></section>
-<div class="lane-legend"><span><i class="green"></i> On target</span><span><i class="amber"></i> Approaching 1:00</span><span><i class="red"></i> Over target</span></div>
-</section>
-<section class="controls" aria-label="Manual lane controls"><div class="controls-title"><h2>You’re in control.</h2><p>Move each car through the lane.</p></div><div class="control-buttons"><button data-action="arrive"><span class="key">A</span><span>Car arrives<small>Add to Order</small></span><b>＋</b></button><button data-action="ordered"><span class="key">O</span><span>Order complete<small>Join the queue</small></span><b>↑</b></button><button data-action="window"><span class="key">W</span><span>Move to Window<small>Start Window timer</small></span><b>←</b></button><button data-action="leave" class="primary"><span class="key">L</span><span>Car leaves<small>Finish & record</small></span><b>✓</b></button></div></section>
-<footer><span id="save-status">Saved on this device</span><div><button id="undo">↶ Undo last action</button><button id="export">↓ Export today</button><button id="history-toggle" aria-expanded="false">View activity</button></div></footer>
-<section id="history" hidden><div class="history-heading"><h2>Today’s completed cars</h2><span>Window time determines the target result.</span></div><div class="table-wrap"><table><thead><tr><th>Car</th><th>Left Window</th><th>Daypart</th><th>Window</th><th>Total journey</th><th>Result</th></tr></thead><tbody id="history-rows"></tbody></table></div></section>
-<p class="storage-note">Manual timing · Data stays in this browser · Dayparts use this device’s local time</p>
-</main><div id="toast" role="status" aria-live="polite"></div>
-<svg width="0" height="0" class="svg-defs" aria-hidden="true"><defs><symbol id="car" viewBox="0 0 80 150"><path d="M14 17Q16 5 30 4h20q14 1 16 13l5 24v77l-6 19q-3 8-13 9H28q-10-1-13-9l-6-19V41z" fill="currentColor"/><rect x="5" y="29" width="6" height="24" rx="3" fill="#162c27"/><rect x="69" y="29" width="6" height="24" rx="3" fill="#162c27"/><rect x="5" y="106" width="6" height="23" rx="3" fill="#162c27"/><rect x="69" y="106" width="6" height="23" rx="3" fill="#162c27"/><path d="M19 43q21-9 42 0l-6 25H25zM25 105h30l6 17q-21 7-42 0z" fill="#163e35"/><path d="M17 50l5 23v29l-5 13zm46 0-5 23v29l5 13z" fill="#28614f"/><rect x="26" y="72" width="28" height="29" rx="7" fill="#fff" opacity=".12"/><path d="M20 18h12m16 0h12M20 134h12m16 0h12" stroke="#e8fff3" stroke-width="5" stroke-linecap="round"/></symbol></defs></svg>
-<script type="module" src="app.js"></script>
-</body></html>
+  <button id="btnExitFullscreen" class="exit-fullscreen" type="button">Exit Fullscreen</button>
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Drive Thru Timer</p>
+        <h1>Harmony Store Map View</h1>
+        <p class="subtext">Brighton timer interface and controls, adapted for Harmony. One lane, Order and Window. Window target: 1 minute.</p>
+      </div>
+      <div class="header-tools">
+        <div class="clock-card">
+          <span>Local time</span>
+          <strong id="currentClock">--:--</strong>
+        </div>
+        <div class="sound-card">
+          <strong>Audio</strong>
+          <span id="soundStatus">Sounds ready after first click</span>
+          <div class="sound-buttons">
+            <button id="btnEnableSounds">Enable Sounds</button>
+            <button id="btnTestSounds" class="alt">Test All Sounds</button>
+            <button id="btnFullscreen" class="alt">Fullscreen Mode</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div id="statusBar" class="status-bar">Ready.</div>
+
+    <section class="main-grid">
+      <section class="left-column">
+        <article class="scoreboard">
+          <div class="scoreboard-top">
+            <div>
+              <h2>Car Count</h2>
+              <p>Completed cars only</p>
+            </div>
+            <div class="count-card">
+              <span>Completed Cars</span>
+              <strong id="completedCount">0</strong>
+            </div>
+          </div>
+
+          <div class="score-row">
+            <div class="name">Order <span class="goal" id="goalOrder">0:30</span></div>
+            <div class="avg" id="avgOrder">0:00</div>
+            <div class="pct" id="pctOrder">0%</div>
+          </div>
+          
+          
+          <div class="score-row">
+            <div class="name">Window <span class="goal" id="goalWindow">1:00</span></div>
+            <div class="avg" id="avgWindow">0:00</div>
+            <div class="pct" id="pctWindow">0%</div>
+          </div>
+          <div class="score-row total-row">
+            <div class="name">Total <span class="goal" id="goalTotal">1:30</span></div>
+            <div class="avg" id="avgTotal">0:00</div>
+            <div class="pct" id="pctTotal">0%</div>
+          </div>
+        </article>
+
+        <article class="control-card">
+          <h3>Controls</h3>
+          <div class="button-grid">
+            <button id="btnAddCar">Add Car</button>
+            <button id="btnReleaseOrder" class="warning">Order Complete</button>
+            <button id="btnReleaseWindow" class="info">Window Complete</button>
+            <button id="btnReset" class="danger">Reset Day</button>
+          </div>
+          <p class="hint">Keyboard shortcuts: 1 = Add Car, Q = Order complete, P = Window complete, F = Fullscreen. Cars move forward automatically when the path clears.</p>
+        </article>
+
+        <article class="history-card">
+          <div class="history-header">
+            <h3>Completed Cars</h3>
+            <span>Averages update only after the car leaves the drive thru.</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Car</th>
+                  <th>Order</th>
+                  <th>Window</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="historyBody">
+                <tr><td colspan="4" class="empty">No completed cars yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="right-column">
+        <article class="map-panel">
+          <div class="map-frame">
+            <svg class="lane-svg" viewBox="0 0 1200 820" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <g class="lane-outline"><path d="M 120 157 H 995 V 800"/></g>
+              <g class="lane-road"><path d="M 120 157 H 995 V 800"/></g>
+              <g class="station-bays">
+                <rect x="168" y="112" width="225" height="88"/>
+                <rect x="950" y="290" width="88" height="225"/>
+              </g>
+              <g class="entry-bays"><rect x="950" y="513" width="88" height="225"/></g>
+            </svg>
+            <div class="label window-label"><strong>Window</strong><span id="labelWindowTime">0:00</span></div>
+            <div class="label order-label"><strong>Order <span id="tickOrder" class="ready-tick is-hidden" aria-label="Order ready to move">✓</span></strong><span id="labelOrderTime">0:00</span></div>
+
+            <div id="carsLayer" class="cars-layer"></div>
+
+            <div class="lane-summary">
+              <span>Cars in Lane</span>
+              <strong id="carsInLane">0</strong>
+              <div class="summary-divider"></div>
+              <span>Total Time</span>
+              <strong id="longestWait" class="status-green">0:00</strong>
+              <em>Longest waiting car</em>
+            </div>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+  <script src="app.js?v=harmony-v2"></script>
+</body>
+</html>
